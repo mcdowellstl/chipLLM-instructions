@@ -28,5 +28,5 @@ jobs:
       # --delete-unmatched: Deletes files in GCS if you delete them in git
       - name: Sync to Cloud Storage
         run: |
-          gcloud storage rsync . gs://chipllm-instructions --recursive --delete-unmatched
+          gcloud storage rsync . gs://chipllm-instructions --recursive --delete-unmatched-destination-objects
 
