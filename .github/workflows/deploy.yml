@@ -1,0 +1,32 @@
+name: Deploy Playbooks to GCS
+
+on:
+  push:
+    branches:
+      - main  # Triggers when changes are pushed to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out the files in the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Authenticate using the Service Account JSON Key Secret
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # 3. Set up Google Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # 4. Sync files in the repository to the GCS bucket
+      # --recursive: Copies subfolders if any exist
+      # --delete-unmatched: Deletes files in GCS if you delete them in git
+      - name: Sync to Cloud Storage
+        run: |
+          gcloud storage rsync . gs://chipllm-instructions --recursive --delete-unmatched
+
